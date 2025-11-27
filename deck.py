@@ -126,7 +126,7 @@ class Deck:
             ## assumes draw from the top of the deck for now
             card = self.cards[0]
             logging.debug(f"You drew: {card}")
-            drawn.add_to_deck(card= card)
+            drawn.add_a_card_to_deck(card= card)
             self.remove_from_the_deck(card)
         logging.debug(drawn)
         logging.debug(self)
@@ -161,22 +161,30 @@ class Deck:
 
         ## determine how many cards and in what format and add
         if isinstance(cards, card.Card):
-            self.add_a_card_to_deck(card= card, placement = placement)
+            logging.debug("add_to_deck received a single card.Card. " \
+                "Passing to add_a_card_to_Deck")
+            self.add_a_card_to_deck(card= cards, placement = placement)
         elif isinstance(cards,Deck):
+            logging.debug("add_to_deck received a Deck object. " \
+                "Passing to add_multiple_cards_to_deck")
             self.add_multiple_cards_to_deck(cards= cards, placement=placement)
         elif isinstance(cards,list) or isinstance(cards,dict):
+            logging.debug("add_to_Deck received a list or dictionary. " \
+                "Assessing for number of contained objects")
             if len(cards) > 1:
+                logging.debug("add_to_deck assessed the list or dictionary and " \
+                    "found it had multiple objects. Passing to add_multipe_cards_to_deck")
                 self.add_multiple_cards_to_deck(cards= cards, placement=placement)
-            elif len(cards) == 0:
-                self.add_a_card_to_deck(card= card, placement = placement)
+            elif len(cards) == 1:
+                logging.debug("add_to_deck assessed the list or dictionary and " \
+                    "found it had one object. Passing to add_a_card_to_deck")
+                self.add_a_card_to_deck(card= cards, placement = placement)
             else:
                 raise Exception("It looks like an empty list was passed to be added " \
                 "to a deck. Nothing was added")
         else:
             raise Exception("An object type was passedto add_to_deck that it doesn't " \
             "know how to handle so nothing was added.")
-
-
 
     def add_multiple_cards_to_deck(self, cards: card.Card| Deck | str, placement: str = "random"):
         """
@@ -218,8 +226,6 @@ class Deck:
         else:
             raise TypeError("An object of an unsupported type was attempted to " \
             "be added to a deck. Interrupting this program")
-
-
 
     def add_a_card_to_deck(self, card, placement: str = "random"):        
         ## check card, if it's a card, carry on. If it's a deck, check how many 
