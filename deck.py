@@ -207,10 +207,11 @@ class Deck:
                 should be at position len of the deck its being added to
         """
         if isinstance(cards, Deck):
-            for card in Deck:
+            for card in cards.cards:
+                logging.debug(f"unpack deck, currently: {card}")
                 self.add_a_card_to_deck(card = card, placement= placement)
         elif isinstance(cards, list):
-            for thing in list:
+            for thing in cards:
                 if isinstance(thing, card.Card):
                     self.add_a_card_to_deck(card = card, placement= placement)
                 elif isinstance(thing, str):
@@ -285,6 +286,10 @@ def test_with_custom_deck():
     my_deck.add_to_deck(card.Card(suit="figs", face="two"), placement="bottom")
     logging.info(my_deck)
     my_deck.add_to_deck(card.Card(suit="grapes", face="two"))
+    logging.info(my_deck)
+    new_deck = Deck(cards=[card.Card(name="three of apples"),card.Card(suit="apples", face="four")])
+    logging.info(new_deck)
+    my_deck.add_to_deck(cards=new_deck)
     logging.info(my_deck)
 
 def test_with_standard_deck():
