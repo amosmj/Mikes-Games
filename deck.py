@@ -229,10 +229,15 @@ class Deck:
             raise TypeError("An object of an unsupported type was attempted to " \
             "be added to a deck. Interrupting this program")
 
-    def add_a_card_to_deck(self, card, placement: str = "random"):        
-        ## check card, if it's a card, carry on. If it's a deck, check how many 
-        ## cards. If it's one, carry on, if it's more we need to address 
-        ## multiple cards differently
+    def add_a_card_to_deck(self, card, placement: str = "random"):    
+        """
+        Place a single card n a deck. 
+        
+        :param self: Description
+        :param card: Description
+        :param placement: Description
+        :type placement: str
+        """
 
         if len(self.cards) == 0:
             logging.debug(f"You are adding {card} to and empty deck")
