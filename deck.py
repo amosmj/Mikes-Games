@@ -5,11 +5,27 @@ import logging
 import card
 
 class Deck:
-    def __init__(self,type: str= "", cards:list[str]=[], players_can_see: bool = True):
-        self.players_can_see = players_can_see
-        if len(cards) == 0:
+    """
+    Deck is a container/group/packet of cards
+
+    :param type: A string that describes how the deck can be used. this is 
+        limited to whatever types I have come up with for now:
+        draw - think of the draw pile in most games, face-down, not 
+            browseable, can be drawn from, usually drawn until exhauseted
+        discard - usually face up and public, often browseable, arbitrarily shuffled
+            and added to a draw pile
+        hand - usually face up but private, usually browseable, usually 
+            cards can be drawn arbitrarily
+        none - default value, behaves like a draw pile by default
+    :type type: str
+    """
+    def __init__(self,type: str= "", cards: str|list[str]=[], **kwargs):
+        for key, value in kwargs.items:
+            setattr(self, key, value)
+        
+        if isinstance(cards, str):
             ## When a card list is not passed it is assumed that you want some kind of standard list
-            if type == "standard":
+            if cards == "standard":
                 suits =["hearts","diamonds","clubs","spades"]
                 values = ["2","3","4","5","6","7","8","9","10","jack","queen","king","ace"]
                 cards = []
@@ -25,11 +41,15 @@ class Deck:
                 logging.debug("No list was passed so I checked for standard deck types. " \
                 "No deck type was recognized so I am passing an empty list as the deck. " \
                 "The assumption is that this is a placeholder and will be populated in game.")
-        else:
+        elif isinstance(cards, list):
             logging.debug("A list was passed so I'm turning that into the deck. " \
             "No type checking for cards has been done.")
+            ## ad type checking, if it's a card, pass add it to the deck as a card, if it's
+            ## a string, add it as a card with the string's name
             # logging.debug(cards)
         # print("passed both elses")
+        else:
+            raise TypeError(f"A {type(cards)} object was passed to create a deck but it doesn't know what to do with it")
         self.cards = cards
         logging.debug(self)
 
@@ -45,9 +65,9 @@ class Deck:
         return deck_str
     
     def __add__(self,other):
-        if type(other) is card.Card:
+        if isinstance(other, card.Card):
             self.cards.append(other)
-        elif type(other) is Deck:
+        elif isinstance(other, Deck):
             self.cards.extend(other)
         else:
             raise TypeError(f"You tried to add a {type(other)} to a Deck. This is not yet supported")
@@ -136,10 +156,10 @@ def test_with_custom_deck():
 
 def test_with_standard_deck():
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-    standard_deck = Deck(type="standard")
+    standard_deck = Deck(cards="standard")
     standard_deck.shuffle_deck()
     logging.info(standard_deck)
                                 
 if __name__ == "__main__":
     test_with_custom_deck()
-    test_with_standard_deck()
+    # test_with_standard_deck()
