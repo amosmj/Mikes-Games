@@ -139,17 +139,19 @@ class Deck:
         then send your call there
         
         :param cards: pass a card, a deck, a string, a list of cards, or a list of strings
+
         :type cards: card.Card | Deck | str | None
+        
         :param placement: Description: pass a valid string and all of the cards will be
             placed in this fasion
+
             Valid Strings:
-            "random" (default) - each card will be placed randomly. This does not
+            * "random" (default) - each card will be placed randomly. This does not
                 currently support placing a paced together randomly
-            "top"  - places all cards on top of the pile. This method is not 
-                complete yet so I'm not quite sure of the order. I do not plan on 
-                handling "flipping" the placed cards (i.e. you discard cards face
-                up so the order is reversed)
-            "bottom" - places all cards on the bottom of the pile, card 0 
+            * "top"  - places all cards on top of the pile. This method
+                currently reverses the order because each card is placed
+                in turn rather than as a packet.
+            * "bottom" - places all cards on the bottom of the pile, card 0 
                 should be at position len of the deck its being added to
         """
         ## check self to make sure you exist
@@ -199,10 +201,9 @@ class Deck:
             Valid Strings:
             "random" (default) - each card will be placed randomly. This does not
                 currently support placing a paced together randomly
-            "top"  - places all cards on top of the pile. This method is not 
-                complete yet so I'm not quite sure of the order. I do not plan on 
-                handling "flipping" the placed cards (i.e. you discard cards face
-                up so the order is reversed)
+            "top"  - places all cards on top of the pile. This method
+                currently reverses the order because each card is placed
+                in turn rather than as a packet.
             "bottom" - places all cards on the bottom of the pile, card 0 
                 should be at position len of the deck its being added to
         """
@@ -291,6 +292,16 @@ def test_with_custom_deck():
     logging.info(new_deck)
     my_deck.add_to_deck(cards=new_deck)
     logging.info(my_deck)
+    new_deck = Deck(cards=[card.Card(name="three of bananas"),card.Card(suit="bananas", face="four")])
+    logging.info(new_deck)
+    my_deck.add_to_deck(cards=new_deck,placement="top")
+    logging.info(my_deck)
+    new_deck = Deck(cards=[card.Card(name="three of cherries"),card.Card(suit="cherries", face="four")])
+    logging.info(new_deck)
+    my_deck.add_to_deck(cards=new_deck,placement="bottom")
+    logging.info(my_deck)
+
+
 
 def test_with_standard_deck():
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
