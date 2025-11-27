@@ -8,8 +8,9 @@ class Deck:
     """
     Deck is a container/group/packet of cards
 
-    :param type: A string that describes how the deck can be used. this is 
-        limited to whatever types I have come up with for now:
+    Arguments:
+    type: An optional string that describes how the deck can be used. 
+        This is limited to whatever types I have come up with for now:
         draw - think of the draw pile in most games, face-down, not 
             browseable, can be drawn from, usually drawn until exhauseted
         discard - usually face up and public, often browseable, arbitrarily shuffled
@@ -17,12 +18,55 @@ class Deck:
         hand - usually face up but private, usually browseable, usually 
             cards can be drawn arbitrarily
         none - default value, behaves like a draw pile by default
-    :type type: str
+    
+    kwargs: In the event that one of the above deck types doesn't do everything
+        that you need you can build your own type or overwrite the default
+        values on one of those types. Here is a list of the keywords I 
+        am thinking you will send:
+        owner
+        who_can_browse - a list of players who are allowed to know what 
+            cards are in the deck and in what order
+        who_can_sort - a list of players who are allowed to change the
+            order of cards
+        who_can_draw - a list of players who are allowed to remove
+            cards from them deck, into their hand
     """
     def __init__(self,type: str= "", cards: str|list[str]=[], **kwargs):
+        ## note to self, do I need to abstract out creating the deck object from populating the deck object
+        if type == 'draw':
+            self.owner = everyne
+            self.who_can_browse = []
+            self.who_can_sort = []
+            ## need to come back to this after I introduce the game and players as objects. 
+            self.who_can_draw = []
+            self.who_can_play = []
+        elif type == 'discard':
+            self.owner = "everyone"
+            self.who_can_browse = "everyone"
+            self.who_can_sort = []
+            self.who_can_draw = []
+            self.who_can_play = []
+        elif type == 'hand':
+            ## need to come back to this after I introduce the game and players as objects. 
+            self.owner = []
+            self.who_can_browse = []
+            self.who_can_sort = []
+            self.who_can_draw = []
+            self.who_can_play = []
+        elif type == "" or type is None:
+            logging.debug("Creating a deck and in else where you should be manually assigning attributes")
+        else:
+            raise ValueError(f"A {type} deck was requested but that value is" \
+                             "not recognized. You will need to pass a know type " \
+                             "or pass the attributes in kwargs")
+        ## assigning attributes here. I want them to overwrite the default attributes
         for key, value in kwargs.items:
             setattr(self, key, value)
         
+        
+
+        ## need to move this into the either the add cards method or create a distinct
+        ## populate_deck method
         if isinstance(cards, str):
             ## When a card list is not passed it is assumed that you want some kind of standard list
             if cards == "standard":
