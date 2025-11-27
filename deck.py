@@ -44,6 +44,14 @@ class Deck:
             deck_str = "You aren't allowed to look in that deck."
         return deck_str
     
+    def __add__(self,other):
+        if type(other) is card.Card:
+            self.cards.append(other)
+        elif type(other) is Deck:
+            self.cards.extend(other)
+        else:
+            raise TypeError(f"You tried to add a {type(other)} to a Deck. This is not yet supported")
+    
     def shuffle_deck(self):
         random.shuffle(self.cards)
         return self.cards
@@ -61,7 +69,10 @@ class Deck:
         logging.debug(self)
         return drawn
 
-    def add_to_deck(self, card: card.Card, placement: str = "random"):
+    def add_to_deck(self, card: card.Card | Deck, placement: str = "random"):
+        ## check card, if it's a card, carry on. If it's a deck, turn it into a list of cards
+
+        ## check self to make sure you exist
         try:
             logging.debug(f"Deck contains {len(self.cards)}")
         except:
@@ -104,10 +115,10 @@ class Deck:
     def cut_the_deck(self):
         pass
 
-if __name__ == "__main__":
+def test_with_custom_deck():
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
     my_deck = Deck(cards=[card.Card(name="two of apples"),card.Card(name="two of bananas")
-                          , card.Card(name="two of cherries"),card.Card(name="two of dates")], players_can_see=False)
+                        , card.Card(name="two of cherries"),card.Card(name="two of dates")], players_can_see=False)
     logging.info(f"Built my little deck: {my_deck}")
     my_deck.players_can_see=True
     logging.info(f"Now I can see my little deck: {my_deck}")
@@ -123,6 +134,12 @@ if __name__ == "__main__":
     my_deck.add_to_deck(card.Card(suit="grapes", face="two"))
     logging.info(my_deck)
 
-    # new_deck = Deck(type="standard")
-    # new_deck.shuffle_deck()
-    # print(new_deck)
+def test_with_standard_deck():
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+    standard_deck = Deck(type="standard")
+    standard_deck.shuffle_deck()
+    logging.info(standard_deck)
+                                
+if __name__ == "__main__":
+    test_with_custom_deck()
+    test_with_standard_deck()
