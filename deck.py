@@ -34,19 +34,22 @@ class Deck:
     def __init__(self,type: str= "", cards: str|list[str]=[], **kwargs):
         ## note to self, do I need to abstract out creating the deck object from populating the deck object
         if type == 'draw':
-            self.owner = everyne
+            logging.debug("Creating a deck as a draw pile")
+            self.owner = "everyone"
             self.who_can_browse = []
             self.who_can_sort = []
             ## need to come back to this after I introduce the game and players as objects. 
             self.who_can_draw = []
             self.who_can_play = []
         elif type == 'discard':
+            logging.debug("Creating a deck as a discrd pile")
             self.owner = "everyone"
             self.who_can_browse = "everyone"
             self.who_can_sort = []
             self.who_can_draw = []
             self.who_can_play = []
         elif type == 'hand':
+            logging.debug("Creating a deck as a hand")
             ## need to come back to this after I introduce the game and players as objects. 
             self.owner = []
             self.who_can_browse = []
@@ -60,11 +63,10 @@ class Deck:
                              "not recognized. You will need to pass a know type " \
                              "or pass the attributes in kwargs")
         ## assigning attributes here. I want them to overwrite the default attributes
-        for key, value in kwargs.items:
+        for key, value in kwargs.items():
             setattr(self, key, value)
         
         
-
         ## need to move this into the either the add cards method or create a distinct
         ## populate_deck method
         if isinstance(cards, str):
@@ -99,20 +101,17 @@ class Deck:
 
     def __str__(self):
         deck_str = ""
-        if self.players_can_see:
-            for card in self.cards:
-                # logging.debug(card.name)
-                # logging.debug(type(card))
-                deck_str += (card.name + " ")
-        else:
-            deck_str = "You aren't allowed to look in that deck."
+        for card in self.cards:
+            # logging.debug(card.name)
+            # logging.debug(type(card))
+            deck_str += (card.name + " ")
         return deck_str
     
     def __add__(self,other):
         if isinstance(other, card.Card):
             self.cards.append(other)
         elif isinstance(other, Deck):
-            self.cards.extend(other)
+            self.cards.extend(other.cards)
         else:
             raise TypeError(f"You tried to add a {type(other)} to a Deck. This is not yet supported")
     
@@ -133,15 +132,27 @@ class Deck:
         logging.debug(self)
         return drawn
 
-    def add_to_deck(self, card: card.Card | Deck, placement: str = "random"):
-        ## check card, if it's a card, carry on. If it's a deck, turn it into a list of cards
-
+    def add_to_deck(self, cards: card.Card| Deck | str | None, placement: str = "random"):
         ## check self to make sure you exist
         try:
             logging.debug(f"Deck contains {len(self.cards)}")
         except:
             logging.debug("You're adding something to an empty deck")
             temp_deck=Deck()
+
+        ## determine how many cards and in what format and add
+
+
+    def add_multiple_cards_to_deck(self, cards: card.Card| Deck | str | None, placement: str = "random"):
+        ## expects a card, deck, list, or dictionary. Proceeds to parse 
+        ## them out of the group and add them one at a time 
+
+
+
+    def add_a_card_to_deck(self, card, placement: str = "random"):        
+        ## check card, if it's a card, carry on. If it's a deck, check how many 
+        ## cards. If it's one, carry on, if it's more we need to address 
+        ## multiple cards differently
 
         if len(self.cards) == 0:
             logging.debug(f"You are adding {card} to and empty deck")
@@ -182,7 +193,7 @@ class Deck:
 def test_with_custom_deck():
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
     my_deck = Deck(cards=[card.Card(name="two of apples"),card.Card(name="two of bananas")
-                        , card.Card(name="two of cherries"),card.Card(name="two of dates")], players_can_see=False)
+                        , card.Card(name="two of cherries"),card.Card(name="two of dates")])
     logging.info(f"Built my little deck: {my_deck}")
     my_deck.players_can_see=True
     logging.info(f"Now I can see my little deck: {my_deck}")
