@@ -35,7 +35,7 @@ class Deck:
         ## note to self, do I need to abstract out creating the deck object from populating the deck object
         if type == 'draw':
             logging.debug("Creating a deck as a draw pile")
-            self.owner = "everyone"
+            self.owner = []
             self.who_can_browse = []
             self.who_can_sort = []
             ## need to come back to this after I introduce the game and players as objects. 
@@ -108,6 +108,12 @@ class Deck:
         return deck_str
     
     def __add__(self,other):
+        """
+        This function is not yet tested. Need to make sure it works as intended
+        
+        :param self: Description
+        :param other: Description
+        """
         if isinstance(other, card.Card):
             self.cards.append(other)
         elif isinstance(other, Deck):
@@ -116,10 +122,19 @@ class Deck:
             raise TypeError(f"You tried to add a {type(other)} to a Deck. This is not yet supported")
     
     def shuffle_deck(self):
+        """
+        Use shuffle on a deck to randomize it.
+        """
         random.shuffle(self.cards)
         return self.cards
     
     def draw(self, number_of_cards : int= 1):
+        """
+        Draws X cards from thr "top" of the deck
+        
+        :param number_of_cards: (default: 1) Pass an integer to draw that many cards from the deck
+        :type number_of_cards: int
+        """
         drawn = Deck()
         ## need to build test for drawing more cards than are in the deck
         for draw in range(number_of_cards):
