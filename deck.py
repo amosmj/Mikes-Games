@@ -133,6 +133,25 @@ class Deck:
         return drawn
 
     def add_to_deck(self, cards: card.Card| Deck | str | None, placement: str = "random"):
+        """
+        Courtesty function to make it esier to add any number of cards to a deck
+        This functon will parse out which supporting method it needs to go to
+        then send your call there
+        
+        :param cards: pass a card, a deck, a string, a list of cards, or a list of strings
+        :type cards: card.Card | Deck | str | None
+        :param placement: Description: pass a valid string and all of the cards will be
+            placed in this fasion
+            Valid Strings:
+            "random" (default) - each card will be placed randomly. This does not
+                currently support placing a paced together randomly
+            "top"  - places all cards on top of the pile. This method is not 
+                complete yet so I'm not quite sure of the order. I do not plan on 
+                handling "flipping" the placed cards (i.e. you discard cards face
+                up so the order is reversed)
+            "bottom" - places all cards on the bottom of the pile, card 0 
+                should be at position len of the deck its being added to
+        """
         ## check self to make sure you exist
         try:
             logging.debug(f"Deck contains {len(self.cards)}")
@@ -141,11 +160,64 @@ class Deck:
             temp_deck=Deck()
 
         ## determine how many cards and in what format and add
+        if isinstance(cards, card.Card):
+            self.add_a_card_to_deck(card= card, placement = placement)
+        elif isinstance(cards,Deck):
+            self.add_multiple_cards_to_deck(cards= cards, placement=placement)
+        elif isinstance(cards,list) or isinstance(cards,dict):
+            if len(cards) > 1:
+                self.add_multiple_cards_to_deck(cards= cards, placement=placement)
+            elif len(cards) == 0:
+                self.add_a_card_to_deck(card= card, placement = placement)
+            else:
+                raise Exception("It looks like an empty list was passed to be added " \
+                "to a deck. Nothing was added")
+        else:
+            raise Exception("An object type was passedto add_to_deck that it doesn't " \
+            "know how to handle so nothing was added.")
 
 
-    def add_multiple_cards_to_deck(self, cards: card.Card| Deck | str | None, placement: str = "random"):
-        ## expects a card, deck, list, or dictionary. Proceeds to parse 
-        ## them out of the group and add them one at a time 
+
+    def add_multiple_cards_to_deck(self, cards: card.Card| Deck | str, placement: str = "random"):
+        """
+        Pass this functon deck of cards or a list of cards and it will unbundle 
+        them and handle passing them one at a time to add_a_card_to_deck.
+        
+        :param cards: designed to take a Deck of cards or a list of cards. 
+        :type cards: card.Card | Deck | str
+    
+        :param placement: Description: pass a valid string and all of the cards will be
+            placed in this fasion
+            Valid Strings:
+            "random" (default) - each card will be placed randomly. This does not
+                currently support placing a paced together randomly
+            "top"  - places all cards on top of the pile. This method is not 
+                complete yet so I'm not quite sure of the order. I do not plan on 
+                handling "flipping" the placed cards (i.e. you discard cards face
+                up so the order is reversed)
+            "bottom" - places all cards on the bottom of the pile, card 0 
+                should be at position len of the deck its being added to
+        """
+        if isinstance(cards, Deck):
+            for card in Deck:
+                self.add_a_card_to_deck(card = card, placement= placement)
+        elif isinstance(cards, list):
+            for thing in list:
+                if isinstance(thing, card.Card):
+                    self.add_a_card_to_deck(card = card, placement= placement)
+                elif isinstance(thing, str):
+                    new_card = card.Card(name=thing)
+                    self.add_a_card_to_deck(card= new_card, placement=placement)
+                elif isinstance(thing, dict):
+                    new_card = card.Card(**thing)
+                    self.add_a_card_to_deck(card= new_card, placement= placement)
+                else:
+                    raise TypeError("An object of an unsupported type was " \
+                        "attempt to be used to create a card and addit to a deck."
+                        " Interrupting this program")
+        else:
+            raise TypeError("An object of an unsupported type was attempted to " \
+            "be added to a deck. Interrupting this program")
 
 
 
